@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Potwierdzenie Wysylki" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3d0aaf9c-b50a-4f4a-a96e-685a7b81ed6a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="nr_przesylki" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    nrprzesylki,
+    CASE WHEN to_char(P.nazwafirmy) IS NULL THEN ' ' ELSE P.nazwafirmy END nazwafirmyplatnika,
+    CASE WHEN to_char(P.nazwisko) IS NULL THEN ' ' ELSE P.nazwisko END nazwiskoplatnika,
+    CASE WHEN to_char(P.imie) IS NULL THEN ' ' ELSE P.imie END imieplatnika,
+    P.kraj krajplatnika,
+    P.miejscowosc miejscowoscplatnika,
+    substr(P.kodpocztowy,1,2)||'-'||substr(P.kodpocztowy,3,3) kodpocztowyplatnika,
+    'ul.'||P.ulica ulicaplatnika,
+    CASE WHEN to_char(P.nrlokalu) IS NULL THEN P.nrbudynku||' ' ELSE P.nrbudynku||'/m.'||to_char(P.nrlokalu) END Budynekplatnika,
+    CASE WHEN to_char(op.nazwafirmy) IS NULL THEN ' ' ELSE op.nazwafirmy END nazwafirmyodbiorcy,
+    CASE WHEN to_char(oP.nazwisko) IS NULL THEN ' ' ELSE oP.nazwisko END nazwiskoodbiorcy,
+    CASE WHEN to_char(oP.imie) IS NULL THEN ' ' ELSE oP.imie END imieodbiorcy,
+    op.kraj krajodbiorcy,
+    op.miejscowosc miejscowoscodbiorcy,
+    substr(op.kodpocztowy,1,2)||'-'||substr(op.kodpocztowy,3,3) kodpocztowyodbiorcy,
+    'ul.'||op.ulica ulicaodbiorcy,
+    CASE WHEN to_char(oP.nrlokalu) IS NULL THEN oP.nrbudynku||' ' ELSE oP.nrbudynku||'/m.'||to_char(oP.nrlokalu) END budynekodbiorcy,
+    zp.pozycja,
+    zp.kodpaczki,
+    zp.ilosc,
+    zp.cenazakupupaczki,
+    zp.wartoscpozycji,
+    plat.koszt,
+    plat.status
+FROM
+    przesylki_fk
+    JOIN platnosci_fk plat USING ( nrplatnosci )
+    JOIN klienci_fk p ON plat.nrplatnika = p.nrklienta
+    JOIN klienci_fk op ON plat.nrodbiorcy = op.nrklienta
+    JOIN zawartosci_przesylek_fk zp USING ( nrprzesylki )
+WHERE
+    nrprzesylki = $P{nr_przesylki}]]>
+	</queryString>
+	<field name="NRPRZESYLKI" class="java.lang.String"/>
+	<field name="NAZWAFIRMYPLATNIKA" class="java.lang.String"/>
+	<field name="NAZWISKOPLATNIKA" class="java.lang.String"/>
+	<field name="IMIEPLATNIKA" class="java.lang.String"/>
+	<field name="KRAJPLATNIKA" class="java.lang.String"/>
+	<field name="MIEJSCOWOSCPLATNIKA" class="java.lang.String"/>
+	<field name="KODPOCZTOWYPLATNIKA" class="java.lang.String"/>
+	<field name="ULICAPLATNIKA" class="java.lang.String"/>
+	<field name="BUDYNEKPLATNIKA" class="java.lang.String"/>
+	<field name="NAZWAFIRMYODBIORCY" class="java.lang.String"/>
+	<field name="NAZWISKOODBIORCY" class="java.lang.String"/>
+	<field name="IMIEODBIORCY" class="java.lang.String"/>
+	<field name="KRAJODBIORCY" class="java.lang.String"/>
+	<field name="MIEJSCOWOSCODBIORCY" class="java.lang.String"/>
+	<field name="KODPOCZTOWYODBIORCY" class="java.lang.String"/>
+	<field name="ULICAODBIORCY" class="java.lang.String"/>
+	<field name="BUDYNEKODBIORCY" class="java.lang.String"/>
+	<field name="POZYCJA" class="java.math.BigDecimal"/>
+	<field name="KODPACZKI" class="java.lang.String"/>
+	<field name="ILOSC" class="java.math.BigDecimal"/>
+	<field name="CENAZAKUPUPACZKI" class="java.math.BigDecimal"/>
+	<field name="WARTOSCPOZYCJI" class="java.math.BigDecimal"/>
+	<field name="KOSZT" class="java.math.BigDecimal"/>
+	<field name="STATUS" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="45" uuid="283a4679-2313-42a4-8eab-9ff58526332a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Potwierdzenie wysyłki]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="156" splitType="Stretch">
+			<textField>
+				<reportElement mode="Transparent" x="23" y="37" width="249" height="100" uuid="a478e4ce-5351-4882-baae-01a01d953976"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NAZWAFIRMYPLATNIKA}.concat(" \n").concat($F{NAZWISKOPLATNIKA}).concat(" ").concat($F{IMIEPLATNIKA}).concat(" \n").concat($F{KRAJPLATNIKA}).concat(" \n").concat($F{MIEJSCOWOSCPLATNIKA}).concat(", ").concat($F{KODPOCZTOWYPLATNIKA}).concat(" \n").concat($F{ULICAPLATNIKA}).concat(" ").concat($F{BUDYNEKPLATNIKA})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="37" width="235" height="100" uuid="207a5a4d-031d-4adc-b750-1e106619ce69"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{NAZWAFIRMYODBIORCY}.concat(" \n").concat($F{NAZWISKOODBIORCY}).concat(" ").concat($F{IMIEODBIORCY}).concat(" \n").concat($F{KRAJODBIORCY}).concat(" \n").concat($F{MIEJSCOWOSCODBIORCY}).concat(", ").concat($F{KODPOCZTOWYODBIORCY}).concat(" \n").concat($F{ULICAODBIORCY}).concat(" ").concat($F{BUDYNEKODBIORCY})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="23" y="3" width="249" height="20" uuid="d666021f-6523-40ba-b562-9a16af8e4402"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dane płatnika]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="3" width="235" height="20" uuid="699aa04c-710f-4ad2-8f4f-06bfae7d76bc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dane odbiorcy płatności]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="300" y="37" width="234" height="100" uuid="427fb5ec-aae1-4746-b2bd-8a95a9238959"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="23" y="37" width="248" height="100" uuid="59a0153b-0578-4dcc-8a95-8cb1d6dface8"/>
+			</rectangle>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="56" splitType="Stretch">
+			<staticText>
+				<reportElement x="23" y="34" width="103" height="22" uuid="31aa9d7e-421c-4ebe-b8d1-94acd54249fd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Pozycja]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="126" y="34" width="103" height="22" uuid="b494af4b-d1d1-4e0d-8bd1-0226d17fb873"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Paczka]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="229" y="34" width="103" height="22" uuid="07d704f9-072c-462b-a93b-fb01696aacff"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Ilość]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="332" y="34" width="103" height="22" uuid="06b6ca74-c2df-4d9d-b3e8-a4b62c1ecff3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Cena]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="433" y="34" width="103" height="22" uuid="1899dc42-d5ae-4f51-a710-111f421bbf7f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Wartość]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="23" y="14" width="511" height="42" uuid="e60b7282-9a44-40e8-a130-5bbd359b60ca"/>
+			</rectangle>
+			<line>
+				<reportElement mode="Transparent" x="435" y="34" width="1" height="22" uuid="547acda6-d175-450a-b271-6d026e6ec719"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="126" y="34" width="1" height="22" uuid="38333e20-c690-4a88-a63e-1bd9faeab671"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="229" y="34" width="1" height="22" uuid="4fd20ca6-c826-4433-90f8-0ff603619beb"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="332" y="34" width="1" height="22" uuid="6f2705d0-fd6f-44d3-b0b0-a729c6cda137"/>
+			</line>
+			<staticText>
+				<reportElement x="148" y="14" width="136" height="20" uuid="5dc3b42f-071b-400c-a256-1149e91a2acc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Przesyłka nr.  ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="284" y="14" width="139" height="20" uuid="95ab3c76-3fdc-4ae7-ac4e-e4fd42b8b86b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRPRZESYLKI}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Transparent" x="24" y="14" width="510" height="20" uuid="fe20199f-2ec6-4f7a-955d-e378adc28e2a"/>
+			</rectangle>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="33" splitType="Stretch">
+			<textField>
+				<reportElement x="23" y="0" width="103" height="33" uuid="373405b3-6c99-43fc-8330-b5e39feaea53"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{POZYCJA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="126" y="0" width="103" height="33" uuid="eb413288-e3d5-4935-aa30-e2cb223f8e8b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{KODPACZKI}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="229" y="0" width="103" height="33" uuid="7d89a3e5-fcb3-497a-ae17-9d18fd599478"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ILOSC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="332" y="0" width="103" height="33" uuid="893c6a07-d1a1-401a-a7ea-be3430df4bd4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CENAZAKUPUPACZKI}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="433" y="0" width="103" height="33" uuid="dd7a24da-1a97-4095-920f-c8ec844854b0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{WARTOSCPOZYCJI}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement mode="Transparent" x="23" y="32" width="511" height="1" uuid="fab5c410-366b-4d3a-9751-56c85f65c263"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="534" y="0" width="1" height="32" uuid="997cd142-7616-448e-8283-547ef10536b1"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="23" y="0" width="1" height="33" uuid="8ba20afe-e145-4591-a110-989b40cb6734"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="332" y="1" width="1" height="32" uuid="8b716e66-6aa1-4207-9827-dbf634f1cdee"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="435" y="1" width="1" height="32" uuid="a7441535-4746-426c-b628-ed7372240af8"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="229" y="1" width="1" height="32" uuid="b348dc5a-b7a5-41b6-9bee-120c0e7c519f"/>
+			</line>
+			<line>
+				<reportElement mode="Transparent" x="126" y="1" width="1" height="32" uuid="c9b05010-6470-4c04-91ae-96e819a9e692"/>
+			</line>
+		</band>
+	</detail>
+	<summary>
+		<band height="87" splitType="Stretch">
+			<staticText>
+				<reportElement x="314" y="20" width="100" height="20" uuid="317dfe67-0af5-4e30-8e65-939ec90dfc9f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Kwota do zapłaty]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="414" y="20" width="100" height="20" uuid="73cd9df3-4711-48a6-8ed0-f2ff5756bbea"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{KOSZT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="367" y="57" width="147" height="20" uuid="e082f56e-a9d4-41fd-9ecd-7e286674aba0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{STATUS}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Transparent" x="414" y="20" width="100" height="20" uuid="f7f18081-cbac-4964-928a-eff215801173"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Transparent" x="367" y="57" width="147" height="20" uuid="c09d210f-88ce-4062-88ba-f251aa731c7f"/>
+			</rectangle>
+		</band>
+	</summary>
+</jasperReport>
